@@ -29,7 +29,7 @@
       $content.append($title, $poster);
       $card.append($content);
 
-      const $action = $('<div>').MarveladdClass('card-action center');
+      const $action = $('<div>').addClass('card-action center');
       const $plot = $('<a>');
 
       $plot.addClass('waves-effect waves-light btn modal-trigger');
@@ -59,7 +59,7 @@
   document.querySelector('button').addEventListener('click', function(e) {
     e.preventDefault();
     // Process the search term so it can be appended to API call
-    const input = document.getElementById('search').value.split(' ').join('%20');
+    const input = document.getElementById('search').value;
     if (input) {
       // Clear out the previous search results
       movies.length = 0;
@@ -75,7 +75,7 @@
         return Promise.all(promiseArr);
       }).then(promises => {
         for (const promise of promises) {
-          // Build movie object as specified
+          // Build movie object
           const movieObj = promise.data;
           movies.push({
             'id': movieObj.imdbID,
