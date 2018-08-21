@@ -29,7 +29,7 @@
       $content.append($title, $poster);
       $card.append($content);
 
-      const $action = $('<div>').addClass('card-action center');
+      const $action = $('<div>').MarveladdClass('card-action center');
       const $plot = $('<a>');
 
       $plot.addClass('waves-effect waves-light btn modal-trigger');
@@ -56,5 +56,37 @@
     }
   };
 
-  // ADD YOUR CODE HERE
+  document.querySelector('button').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Process the search term so it can be appended to API call
+    const input = document.getElementById('search').value.split(' ').join('%20');
+    if (input) {
+      // Clear out the previous search results
+      movies.length = 0;
+      // API call for search
+      axios.get(`http://www.omdbapi.com/?apikey=80756297&s=${input}`)
+      .then(searchResponse => {
+        // Use promise array to wait for multiple asynchronous api calls
+        let promiseArr = [];
+        // Make an API call using the imdbID of each movie returned by search
+        for (const searchResult of searchResponse.data.Search) {
+          promiseArr.push(axios.get(`http://www.omdbapi.com/?apikey=80756297&i=${searchResult.imdbID}&plot=full`));
+        }
+        return Promise.all(promiseArr);
+      }).then(promises => {
+        for (const promise of promises) {
+          // Build movie object as specified
+          const movieObj = promise.data;
+          movies.push({
+            'id': movieObj.imdbID,
+            'poster': movieObj.Poster,
+            'title': movieObj.Title,
+            'year': movieObj.Year,
+            'plot': movieObj.Plot
+          });
+        }
+        renderMovies();
+      });
+    }
+  });
 })();
